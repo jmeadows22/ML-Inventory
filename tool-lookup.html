@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meadows Landscapes — Tool Lookup</title>
+<script src="tools-data.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green-dark:  #1F5C2E;
+    --green-mid:   #2E8B57;
+    --green-light: #D6EAD6;
+    --orange:      #E87722;
+    --gray-light:  #F4F6F4;
+    --gray-mid:    #C8D4C8;
+    --text:        #1A1A1A;
+    --text-muted:  #556655;
+  }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--gray-light);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--green-dark);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-mark {
+    width: 42px; height: 42px;
+    background: var(--green-mid);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -1px;
+  }
+  header h1 { color: #fff; font-size: 18px; font-weight: 700; line-height: 1.2; }
+  header p  { color: var(--green-light); font-size: 12px; margin-top: 2px; }
+
+  /* ── MAIN ── */
+  main { padding: 24px 16px; max-width: 600px; margin: 0 auto; }
+
+  /* ── NOT FOUND / ERROR STATES ── */
+  .state-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 36px 24px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+  .state-icon { font-size: 48px; margin-bottom: 12px; }
+  .state-card h2 { font-size: 20px; color: var(--green-dark); margin-bottom: 8px; }
+  .state-card p  { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+  /* ── TOOL CARD ── */
+  .tool-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,.10);
+  }
+
+  .tool-header {
+    background: var(--green-dark);
+    padding: 20px 22px 18px;
+    position: relative;
+  }
+  .tool-header .badge {
+    display: inline-block;
+    background: var(--green-mid);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .tool-header h2 {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .tool-header .brand-model {
+    color: var(--green-light);
+    font-size: 13px;
+  }
+
+  .status-pill {
+    position: absolute;
+    top: 20px; right: 22px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .status-active    { background: #D4EDDA; color: #155724; }
+  .status-available { background: #D1ECF1; color: #0C5460; }
+  .status-repair    { background: #FFF3CD; color: #856404; }
+  .status-retired   { background: #F8D7DA; color: #721C24; }
+
+  /* ── SECTIONS ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 16px 22px 6px;
+    border-bottom: 1px solid var(--gray-mid);
+  }
+
+  .field-group { padding: 0 22px; }
+
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 11px 0;
+    border-bottom: 1px solid #F0F0F0;
+    gap: 12px;
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-label { font-size: 12px; color: var(--text-muted); flex-shrink: 0; width: 130px; }
+  .field-value { font-size: 14px; font-weight: 600; color: var(--text); text-align: right; }
+
+  /* ── ASSIGNED HIGHLIGHT ── */
+  .assigned-block {
+    margin: 0 22px 20px;
+    background: var(--green-light);
+    border-left: 4px solid var(--green-mid);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .assigned-avatar {
+    width: 44px; height: 44px;
+    background: var(--green-dark);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .assigned-name  { font-size: 16px; font-weight: 700; color: var(--green-dark); }
+  .assigned-crew  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── CONTACT FOOTER ── */
+  .contact-footer {
+    background: var(--gray-light);
+    border-top: 1px solid var(--gray-mid);
+    padding: 14px 22px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+  .contact-footer strong { color: var(--green-dark); }
+
+  /* ── WARNING BANNER for warranty ── */
+  .warn-banner {
+    margin: 14px 22px 0;
+    background: #FFF8E6;
+    border: 1px solid #F0C040;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #7A5700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── SCAN AGAIN ── */
+  .scan-again {
+    text-align: center;
+    margin: 20px 0 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .scan-again a { color: var(--green-mid); text-decoration: none; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">ML</div>
+  <div>
+    <h1>Tool Fleet Lookup</h1>
+    <p>Meadows Landscapes — Power Tool Fleet Program</p>
+  </div>
+</header>
+
+<main id="app">
+  <!-- content injected by JS -->
+</main>
+
+<script>
+(function () {
+  const app = document.getElementById('app');
+  const params = new URLSearchParams(window.location.search);
+  const toolId = (params.get('tool') || '').toUpperCase().trim();
+
+  // ── helpers ──────────────────────────────────────────────
+  function initials(name) {
+    if (!name || name === 'Unassigned') return '?';
+    return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  function statusClass(s) {
+    const m = { 'Active': 'active', 'Available': 'available', 'In Repair': 'repair', 'Retired': 'retired', 'Missing': 'repair' };
+    return 'status-' + (m[s] || 'available');
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    const [y, m, day] = d.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+  }
+
+  function warrantyExpired(d) {
+    if (!d) return false;
+    return new Date(d) < new Date();
+  }
+
+  function warrantyExpiringSoon(d) {
+    if (!d) return false;
+    const exp = new Date(d);
+    const soon = new Date();
+    soon.setMonth(soon.getMonth() + 6);
+    return exp >= new Date() && exp <= soon;
+  }
+
+  // ── no tool ID supplied ───────────────────────────────────
+  if (!toolId) {
+    app.innerHTML = `
+      <div class="state-card">
+        <div class="state-icon">🔍</div>
+        <h2>Scan a Tool QR Code</h2>
+        <p>Point your phone camera at the QR sticker on any Meadows Landscapes tool to view its details and current assignment.</p>
+      </div>`;
+    return;
+  }
+
+  // ── look up tool ──────────────────────────────────────────
+  const tool = (typeof TOOLS !== 'undefined' ? TOOLS : []).find(t => t.id === toolId);
+
+  if (!tool) {
+    app.innerHTML = `
+      <div class="state-card">
+        <div class="state-icon">⚠️</div>
+        <h2>Tool Not Found</h2>
+        <p>No record found for ID <strong>${toolId}</strong>. The sticker may be damaged or this tool hasn't been entered in the database yet.</p>
+        <p style="margin-top:12px">Contact Purchasing to report this.</p>
+      </div>`;
+    return;
+  }
+
+  // ── warranty banners ──────────────────────────────────────
+  let warnHtml = '';
+  if (warrantyExpired(tool.warrantyExp)) {
+    warnHtml = `<div class="warn-banner">⚠️ Warranty expired ${formatDate(tool.warrantyExp)} — contact Purchasing before any repairs.</div>`;
+  } else if (warrantyExpiringSoon(tool.warrantyExp)) {
+    warnHtml = `<div class="warn-banner">📅 Warranty expires ${formatDate(tool.warrantyExp)} — expiring within 6 months.</div>`;
+  }
+
+  // ── render ────────────────────────────────────────────────
+  app.innerHTML = `
+    <div class="tool-card">
+
+      <div class="tool-header">
+        <span class="badge">${tool.id}</span>
+        <span class="status-pill ${statusClass(tool.status)}">${tool.status}</span>
+        <h2>${tool.description}</h2>
+        <div class="brand-model">${tool.brand} · ${tool.model}</div>
+      </div>
+
+      ${warnHtml}
+
+      <div class="section-label">Assigned To</div>
+      <div class="assigned-block">
+        <div class="assigned-avatar">${initials(tool.assigned)}</div>
+        <div>
+          <div class="assigned-name">${tool.assigned}</div>
+          <div class="assigned-crew">${tool.crew}</div>
+        </div>
+      </div>
+
+      <div class="section-label">Tool Details</div>
+      <div class="field-group">
+        <div class="field-row">
+          <span class="field-label">Asset Tag</span>
+          <span class="field-value">${tool.assetTag || '—'}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Serial Number</span>
+          <span class="field-value">${tool.serial}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Brand / Model</span>
+          <span class="field-value">${tool.brand} ${tool.model}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Purchase Date</span>
+          <span class="field-value">${formatDate(tool.purchaseDate)}</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Warranty Expires</span>
+          <span class="field-value">${formatDate(tool.warrantyExp)}</span>
+        </div>
+      </div>
+
+      <div class="section-label">Storage Location</div>
+      <div class="field-group">
+        <div class="field-row">
+          <span class="field-label">Stored At</span>
+          <span class="field-value">${tool.storage}</span>
+        </div>
+      </div>
+
+      <div class="contact-footer">
+        Questions? Contact <strong>Meadows Landscapes Purchasing</strong><br>
+        To report a lost, stolen, or damaged tool, notify your Operations Manager immediately.
+      </div>
+    </div>
+
+    <p class="scan-again">Tool Fleet Program · <a href="tool-lookup.html">Lookup another tool</a></p>
+  `;
+})();
+</script>
+</body>
+</html>
